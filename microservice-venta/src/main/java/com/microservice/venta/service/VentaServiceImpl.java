@@ -46,7 +46,6 @@ public class VentaServiceImpl implements IVentaService{
 
     @Override
     public List<Venta> findByIdCourse(Long idProducto) {
-        // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'findByIdCourse'");
     }
 

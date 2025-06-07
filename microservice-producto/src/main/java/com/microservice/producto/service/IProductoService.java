@@ -11,7 +11,7 @@ public interface IProductoService {
 
     Producto findById(Long id);
 
-    void save(Producto course);
+    void save(Producto producto);
 
     VentaByProductoResponse findVentasByIdProducto(Long idProducto);
 }

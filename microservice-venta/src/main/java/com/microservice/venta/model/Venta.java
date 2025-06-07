@@ -24,6 +24,6 @@ public class Venta {
     private String idventa;
 
     @Column(name = "venta_id")
-    private Long ventaId; //Parametro por el que yo voy a buscar en el otro microservicio
+    private Long ventaId; 
 
 }

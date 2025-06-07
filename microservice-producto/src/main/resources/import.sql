@@ -1,5 +1,5 @@
-INSERT INTO Producto(name,last_name,producto_id) VALUES ('Armani','Code',1);
-INSERT INTO Producto(name,last_name,producto_id) VALUES ('Antonio Banderas','Love',2);
-INSERT INTO Producto(name,last_name,producto_id) VALUES ('Polo','Laurence',3);
-INSERT INTO Producto(name,last_name,producto_id) VALUES ('Paco Rabbane','Fruit',4);
-INSERT INTO Producto(name,last_name,producto_id) VALUES ('Perfume Avon','Basic',2);
+INSERT INTO producto(name,modelo) VALUES ('Armani','Code');
+INSERT INTO producto(name,modelo) VALUES ('Antonio Banderas','Love');
+INSERT INTO producto(name,modelo) VALUES ('Polo','Laurence');
+INSERT INTO producto(name,modelo) VALUES ('Paco Rabbane','Fruit');
+INSERT INTO producto(name,modelo) VALUES ('Perfume Avon','Basic');
