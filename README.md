@@ -4,6 +4,7 @@ Integrantes del proyecto:
 - Gustavo Gutierrez
 
 //endpoint para probar nuestra conexion
+
 get para traer los productos de nuestro catalogo
 
 GET : localhost:9090/api/v1/producto/all 
