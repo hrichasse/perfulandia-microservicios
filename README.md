@@ -8,3 +8,7 @@ Integrantes del proyecto:
 get para traer los productos de nuestro catalogo
 
 GET : localhost:9090/api/v1/producto/all 
+
+Para probar 1 en 1 
+
+GET : localhost:9090/api/v1/producto/search/3
