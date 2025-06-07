@@ -19,10 +19,10 @@
 
   <modules>
     <module>microservice-config</module>
-    <module>microservice-course</module>
+    <module>microservice-producto</module>
     <module>microservice-eureka</module>
     <module>microservice-gateway</module>
-    <module>microservice-student</module>
+    <module>microservice-venta</module>
   </modules><!--El microservicio ya es un modulo de nuestro padre-->
 
 
