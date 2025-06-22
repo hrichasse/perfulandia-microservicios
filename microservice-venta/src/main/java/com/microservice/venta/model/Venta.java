@@ -14,19 +14,16 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Venta {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private String name;
+ @Id 
+ @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    @Column(name = "last_name")
-    private String nombreProducto;
-    private String idventa;
+  private String name;
+  private String idventa;
 
-    @Column(name = "venta_id")
-    private Long ventaId; 
+  @Column(name = "venta_id")
+  private Long ventaId;
 
-    @Column(name = "producto_id")
-    private Long productoId;
-
+  @Column(name = "producto_id")
+  private Long productoId;
 }
