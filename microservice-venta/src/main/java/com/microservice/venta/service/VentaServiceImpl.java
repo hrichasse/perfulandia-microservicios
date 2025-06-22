@@ -33,7 +33,8 @@ public class VentaServiceImpl implements IVentaService{
 
     @Override
     public List<Venta> findByIdProducto(Long idProducto) {
-        return ventaRepository.findAllVenta(idProducto);
+        // asumiendo que idProducto es en realidad ventaId
+        return ventaRepository.findAllByVentaId(idProducto);
     }
 
     public VentaRepository getVentaRepository() {
@@ -45,8 +46,8 @@ public class VentaServiceImpl implements IVentaService{
     }
 
     @Override
-    public List<Venta> findByIdCourse(Long idProducto) {
-        throw new UnsupportedOperationException("Unimplemented method 'findByIdCourse'");
+    public List<Venta> findByIdVenta(Long idVenta) {
+        throw new UnsupportedOperationException("Unimplemented method 'findByIdVenta'");
     }
 
 }

@@ -26,4 +26,7 @@ public class Venta {
     @Column(name = "venta_id")
     private Long ventaId; 
 
+    @Column(name = "producto_id")
+    private Long productoId;
+
 }

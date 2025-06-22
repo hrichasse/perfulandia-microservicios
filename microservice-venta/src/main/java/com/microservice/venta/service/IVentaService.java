@@ -10,9 +10,9 @@ public interface IVentaService {
 
     Venta findById(Long id);
     
-    void save(Venta ventas);
+    void save(Venta venta);
 
-    List<Venta> findByIdCourse(Long idProducto);
+    List<Venta> findByIdVenta(Long idProducto);
 
     Object findByIdProducto(Long productoId);
 

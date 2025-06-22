@@ -13,11 +13,13 @@ public interface VentaRepository extends JpaRepository<Venta,Long>{
 
     
     @Query("SELECT s FROM  s WHERE s.ventaId = :idVenta")
-    List<Venta> findAllStudent(Long idVenta);
+   // VentaRepository.java
+    List<Venta> findAllByVentaId(Long ventaId);
 
-    List<Venta> findAllVenta(Long idProducto);
+    List<Venta> findAllByProductoId(Long productoId);
 
-    //Query Method
-    //List<Student> findAllByCourseId(Long courseId);
 
 }
+
+
+
