@@ -1,25 +1,15 @@
 package com.microservice.venta.repository;
 
-import java.util.List;
-
+import com.microservice.venta.model.Venta;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import com.microservice.venta.model.Venta;
+import java.util.List;
 
 @Repository
-public interface VentaRepository extends JpaRepository<Venta,Long>{
+public interface VentaRepository extends JpaRepository<Venta, Long> {
 
-    
-    @Query("SELECT s FROM  s WHERE s.ventaId = :idVenta")
-   // VentaRepository.java
+    // ¡Quita la @Query y deja que Spring derive la consulta!
     List<Venta> findAllByVentaId(Long ventaId);
 
-    List<Venta> findAllByProductoId(Long productoId);
-
-
-}
-
-
-
+    }
