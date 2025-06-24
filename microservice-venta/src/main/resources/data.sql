@@ -1,3 +1,4 @@
+
 INSERT INTO ventas (id, name, idventa, venta_id, producto_id)
 VALUES (1, 'Esteban', 'IDV-0001', 1001, 2001);
 

@@ -23,7 +23,7 @@
     <module>microservice-eureka</module>
     <module>microservice-gateway</module>
     <module>microservice-venta</module>
-  </modules><!--El microservicio ya es un modulo de nuestro padre-->
+  </modules>
 
 
   <url>http://www.example.com</url>

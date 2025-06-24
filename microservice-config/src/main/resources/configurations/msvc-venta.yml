@@ -4,17 +4,23 @@ server:
 spring:
   application:
     name: msvc-venta
+
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/perfulandia
     username: root
-    password: 
+    password:
+
   jpa:
     hibernate:
       ddl-auto: create
     database: mysql
     database-platform: org.hibernate.dialect.MySQL8Dialect
-  
+    defer-datasource-initialization: true
+
+  sql:
+    init:
+      mode: always
 
 eureka:
   instance:
