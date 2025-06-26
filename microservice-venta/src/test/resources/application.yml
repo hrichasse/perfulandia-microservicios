@@ -1,14 +1,32 @@
 spring:
-
+  # Desactivamos el Config Server para evitar problemas de configuración externa durante los tests
   cloud:
     config:
-      enabled: false
+      enabled: false    # Desactivar Config Server en tests
 
-
+  # Configuración para H2 en memoria para los tests
   datasource:
-    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1  # Base de datos H2 en memoria
     driverClassName: org.h2.Driver
+    username: sa  # Usuario por defecto de H2
+    password: password  # Contraseña por defecto
+
+  # Configuración JPA para crear y actualizar las tablas automáticamente en cada arranque
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: update   # Hibernate crea las tablas automáticamente
+    show-sql: true         # Muestra las sentencias SQL generadas en los logs (útil para debugging)
 
+  # Habilitar consola H2 para inspeccionar la base de datos en memoria (opcional)
+  h2:
+    console:
+      enabled: true        # Habilitar la consola H2 en http://localhost:8080/h2-console
+
+  # Otras configuraciones de la aplicación (puedes dejarlo como está)
+  application:
+    name: msvc-venta
+
+  # Configuración de inicialización de SQL
+  sql:
+    init:
+      mode: always        # Asegura que los scripts SQL siempre se ejecuten al iniciar la base de datos
