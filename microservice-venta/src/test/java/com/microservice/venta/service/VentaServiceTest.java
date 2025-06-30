@@ -12,8 +12,10 @@ import org.mockito.MockitoAnnotations;
 
 import java.util.Optional;
 import java.util.List;
+import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
 class VentaServiceTest {
@@ -70,15 +72,20 @@ class VentaServiceTest {
         verify(repo).findAllByProductoId(101L);
     }
 
-    @Test
-    void findByIdProductoNotFound() {
-        when(repo.findAllByProductoId(anyLong())).thenReturn(List.of());
+@Test
+void findByIdProductoNotFound() {
+    // Simulamos que el repositorio devuelve una lista vacía
+    when(repo.findAllByProductoId(anyLong())).thenReturn(new ArrayList<>());  // Simulamos que no se encuentran ventas
 
-        // Verifica que se lanza la excepción con el mensaje adecuado
-        EntityNotFoundException thrown = assertThrows(EntityNotFoundException.class,
-                () -> service.findByIdProducto(101L));
+    // Verificamos que la excepción EntityNotFoundException sea lanzada cuando llamamos al servicio
+    EntityNotFoundException thrown = assertThrows(EntityNotFoundException.class, 
+        () -> service.findByIdProducto(42L));  // Aquí 42L es el id del producto
 
-        assertEquals("No se encontraron ventas para el producto con ID 101", thrown.getMessage());  // Comprobamos el mensaje de la excepción
-        verify(repo).findAllByProductoId(101L);
-    }
+    // Verificamos el mensaje de la excepción
+    assertEquals("No se encontraron ventas para el producto con ID 42", thrown.getMessage());
+
+    // Verificamos que el repositorio fue llamado con el id del producto
+    verify(repo).findAllByProductoId(42L);  // Usamos el nombre correcto de la variable mockeada
+}
+
 }

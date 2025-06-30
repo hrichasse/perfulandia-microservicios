@@ -32,12 +32,23 @@ public class VentaServiceImpl implements IVentaService {
 
     @Override
     public List<Venta> findByIdProducto(Long idProducto) {
-        // Asegúrate de que el repositorio tiene el método correcto
-        return ventaRepository.findAllByProductoId(idProducto);  // Devuelve List<Venta>
+        // Buscar las ventas asociadas al producto
+        List<Venta> ventas = ventaRepository.findAllByProductoId(idProducto);
+
+        // Si no se encuentran ventas, lanzamos una excepción
+        if (ventas == null || ventas.isEmpty()) {
+            throw new EntityNotFoundException("No se encontraron ventas para el producto con ID " + idProducto);
+        }
+
+        return ventas;
     }
 
     @Override
     public List<Venta> findByIdVenta(Long idVenta) {
         throw new UnsupportedOperationException("Método findByIdVenta no implementado");
     }
+
+    
+
+
 }

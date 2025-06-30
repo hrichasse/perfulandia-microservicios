@@ -6,6 +6,6 @@ import java.util.List;
 
 public interface VentaRepository extends JpaRepository<Venta, Long> {
 
-    // Método para obtener todas las ventas relacionadas con un productoId
-    List<Venta> findAllByProductoId(Long productoId);  // Asegúrate de que devuelva List<Venta>
+    // Método para buscar todas las ventas asociadas a un producto
+    List<Venta> findAllByProductoId(Long productoId);
 }
