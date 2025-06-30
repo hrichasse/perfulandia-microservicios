@@ -3,10 +3,13 @@ spring:
     name: msvc-producto
   config:
     import: optional:configserver:http://localhost:8888
+  cloud:
+    config:
+      fail-fast: true
 
-# --- Añadimos aquí SpringDoc/OpenAPI ---
-springdoc:
-  api-docs:
-    path: /v3/api-docs
-  swagger-ui:
-    path: /swagger-ui.html
+  # --- Añadimos aquí SpringDoc/OpenAPI ---
+  springdoc:
+    api-docs:
+      path: /v3/api-docs  # Ruta para la API Docs
+    swagger-ui:
+      path: /swagger-ui.html  # Ruta para la interfaz de Swagger
