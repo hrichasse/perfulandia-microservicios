@@ -9,5 +9,11 @@ spring:
 
   sql:
     init:
-      mode: always     
+      mode: always
 
+  # Configuración de Swagger
+  doc:
+    api-docs:
+      path: /v3/api-docs
+    swagger-ui:
+      path: /swagger-ui.html

@@ -1,16 +1,16 @@
 package com.microservice.venta.service;
 
-import java.util.List;
+import com.microservice.venta.model.Venta;
+import com.microservice.venta.repository.VentaRepository;
+import jakarta.persistence.EntityNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.microservice.venta.model.Venta;
-import com.microservice.venta.repository.VentaRepository;
-
+import java.util.List;
 
 @Service
-public class VentaServiceImpl implements IVentaService{
+public class VentaServiceImpl implements IVentaService {
 
     @Autowired
     private VentaRepository ventaRepository;
@@ -22,8 +22,7 @@ public class VentaServiceImpl implements IVentaService{
 
     @Override
     public Venta findById(Long id) {
-        return ventaRepository.findById(id).orElseThrow();//Si no lo encuentra
-        //Entonces lanza un error
+        return ventaRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Venta con ID " + id + " no encontrada"));
     }
 
     @Override
@@ -33,21 +32,12 @@ public class VentaServiceImpl implements IVentaService{
 
     @Override
     public List<Venta> findByIdProducto(Long idProducto) {
-        // asumiendo que idProducto es en realidad ventaId
-        return ventaRepository.findAllByVentaId(idProducto);
-    }
-
-    public VentaRepository getVentaRepository() {
-        return ventaRepository;
-    }
-
-    public void setVentaRepository(VentaRepository ventaRepository) {
-        this.ventaRepository = ventaRepository;
+        // Asegúrate de que el repositorio tiene el método correcto
+        return ventaRepository.findAllByProductoId(idProducto);  // Devuelve List<Venta>
     }
 
     @Override
     public List<Venta> findByIdVenta(Long idVenta) {
-        throw new UnsupportedOperationException("Unimplemented method 'findByIdVenta'");
+        throw new UnsupportedOperationException("Método findByIdVenta no implementado");
     }
-
 }

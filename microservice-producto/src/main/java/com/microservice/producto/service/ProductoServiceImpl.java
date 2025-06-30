@@ -2,17 +2,17 @@ package com.microservice.producto.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import com.microservice.producto.client.VentaClient;
 import com.microservice.producto.dto.VentaDTO;
 import com.microservice.producto.http.response.VentaByProductoResponse;
 import com.microservice.producto.model.Producto;
 import com.microservice.producto.repository.IProductoRepository;
+import jakarta.persistence.EntityNotFoundException;
 
 import java.util.List;
 
 @Service
-public class ProductoServiceImpl implements IProductoService{
+public class ProductoServiceImpl implements IProductoService {
 
     @Autowired
     private IProductoRepository iProductoRepository;
@@ -27,7 +27,9 @@ public class ProductoServiceImpl implements IProductoService{
 
     @Override
     public Producto findById(Long id) {
-        return iProductoRepository.findById(id).orElseThrow();
+        // Lanzar excepción si no se encuentra el producto
+        return iProductoRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Producto con ID " + id + " no encontrado"));
     }
 
     @Override
@@ -36,17 +38,15 @@ public class ProductoServiceImpl implements IProductoService{
     }
 
     @Override
-    public VentaByProductoResponse findVentasByIdProducto(Long idProducto){
+    public VentaByProductoResponse findVentasByIdProducto(Long idProducto) {
+        // Buscar el producto; si no se encuentra, lanzamos una excepción
+        Producto producto = iProductoRepository.findById(idProducto)
+                .orElseThrow(() -> new EntityNotFoundException("Producto con ID " + idProducto + " no encontrado"));
 
-
-        //Consultar el curso
-        //Porque devuelve un optional
-        Producto producto = iProductoRepository.findById(idProducto).orElse(new Producto());
-
-        //Obtener los estudiantes que estan en el curso obtenido
+        // Consultar ventas por producto usando el cliente
         List<VentaDTO> ventaDTOList = ventaClient.findAllVentaByProducto(idProducto);
 
-
+        // Construir y devolver la respuesta
         return VentaByProductoResponse.builder()
                 .productoName(producto.getName())
                 .modelo(producto.getModelo())

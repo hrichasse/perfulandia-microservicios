@@ -3,3 +3,10 @@ spring:
     name: msvc-producto
   config:
     import: optional:configserver:http://localhost:8888
+
+# --- Añadimos aquí SpringDoc/OpenAPI ---
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
