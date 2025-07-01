@@ -1,51 +1,64 @@
 package com.microservice.producto.controller;
 
+import com.microservice.producto.model.Producto;
+import com.microservice.producto.service.IProductoService;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import jakarta.persistence.EntityNotFoundException;
+
 import java.util.Arrays;
 import java.util.List;
 
-import com.microservice.producto.model.Producto;
-import com.microservice.producto.service.IProductoService;
-
-import jakarta.persistence.EntityNotFoundException;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
-import org.mockito.InjectMocks;
-import org.mockito.MockitoAnnotations;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.test.web.servlet.MockMvc;
-
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(ProductoController.class)  // Usamos WebMvcTest para enfocarnos solo en el controlador
+@WebMvcTest(ProductoController.class)  // Esto asegura que solo se cargue el controlador
 class ProductoControllerTest {
 
     @Autowired
-    private MockMvc mockMvc;  // Inyectado automáticamente por WebMvcTest
+    private MockMvc mockMvc;  // MockMvc se inyecta automáticamente por WebMvcTest
 
-    @MockBean  // Simula la inyección del servicio IProductoService
-    private IProductoService productoService;
+    @MockBean
+    private IProductoService productoService;  // Aquí usamos MockBean para simular el servicio
+
+    @Test
+    void getAll_ReturnsListJson() throws Exception {
+        // Crear lista simulada de productos
+        List<Producto> productos = Arrays.asList(
+            new Producto(1L, "Armani", "Code"),
+            new Producto(2L, "Paco Rabanne", "Invictus")
+        );
+
+        // Simulamos la respuesta del servicio
+        when(productoService.findAll()).thenReturn(productos);
+
+        mockMvc.perform(get("/api/v1/producto/all"))  // Asegúrate de que la ruta sea correcta
+               .andExpect(status().isOk())  // Verificar estado 200 OK
+               .andExpect(jsonPath("$.length()").value(2))  // Verificar que hay dos productos
+               .andExpect(jsonPath("$[0].name").value("Armani"))  // Verificar el nombre del primer producto
+               .andExpect(jsonPath("$[1].name").value("Paco Rabanne"));  // Verificar el nombre del segundo producto
+    }
 
     @Test
     void getById_ReturnsProductoJson() throws Exception {
-        // Preparar el producto simulado
         Producto producto = new Producto();
         producto.setId(1L);
         producto.setName("Armani");
         producto.setModelo("Code");
 
-        // Simular la llamada al servicio
+        // Simulamos la respuesta del servicio
         when(productoService.findById(1L)).thenReturn(producto);
 
-        // Realizar la solicitud GET y verificar el resultado
-        mockMvc.perform(get("/api/v1/producto/productos/{id}", 1L))
+        mockMvc.perform(get("/api/v1/producto/search/{id}", 1L))
                .andExpect(status().isOk())
                .andExpect(jsonPath("$.id").value(1L))
                .andExpect(jsonPath("$.name").value("Armani"))
@@ -53,27 +66,14 @@ class ProductoControllerTest {
     }
 
     @Test
-    void getAll_ReturnsListJson() throws Exception {
-        // Agregar productos simulados
-        List<Producto> productos = Arrays.asList(
-            new Producto(1L, "Armani", "Code"),
-            new Producto(2L, "Paco Rabanne", "Invictus")
-        );
+void getById_NotFound() throws Exception {
+    // Simulamos que no se encuentra el producto
+    when(productoService.findById(42L)).thenThrow(new EntityNotFoundException("Producto no encontrado"));
 
-        when(productoService.findAll()).thenReturn(productos);
+    // Realizamos la solicitud GET y verificamos el resultado
+    mockMvc.perform(get("/api/v1/producto/search/{id}", 42L))
+           .andExpect(status().isNotFound())  // Verifica que la respuesta sea 404
+           .andExpect(content().string("Producto no encontrado"));  // Verifica que el mensaje de error sea el esperado
+}
 
-        mockMvc.perform(get("/api/v1/producto/productos"))
-               .andExpect(status().isOk())
-               .andExpect(jsonPath("$.length()").value(2))
-               .andExpect(jsonPath("$[0].name").value("Armani"))
-               .andExpect(jsonPath("$[1].name").value("Paco Rabanne"));
-    }
-
-    @Test
-    void getById_NotFound() throws Exception {
-        when(productoService.findById(anyLong())).thenThrow(new EntityNotFoundException("Producto no encontrado"));
-
-        mockMvc.perform(get("/api/v1/producto/productos/{id}", 42L))
-               .andExpect(status().isNotFound());
-    }
 }
