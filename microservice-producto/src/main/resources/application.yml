@@ -8,7 +8,7 @@ spring:
       fail-fast: true
 
   # --- Añadimos aquí SpringDoc/OpenAPI ---
-  springdoc:
+springdoc:
     api-docs:
       path: /v3/api-docs  # Ruta para la API Docs
     swagger-ui:
