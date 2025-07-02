@@ -49,7 +49,7 @@ class VentaServiceTest {
     void findByIdNotFound() {
         when(repo.findById(anyLong())).thenReturn(Optional.empty());
 
-        // Verifica que se lanza la excepción con el mensaje adecuado
+        // Verifica que se lanza la excepcion con el mensaje adecuado
         EntityNotFoundException thrown = assertThrows(EntityNotFoundException.class,
                 () -> service.findById(42L));
         
@@ -74,14 +74,14 @@ class VentaServiceTest {
 
 @Test
 void findByIdProductoNotFound() {
-    // Simulamos que el repositorio devuelve una lista vacía
+    // Simulamos que el repositorio devuelve una lista vacia
     when(repo.findAllByProductoId(anyLong())).thenReturn(new ArrayList<>());  // Simulamos que no se encuentran ventas
 
     // Verificamos que la excepción EntityNotFoundException sea lanzada cuando llamamos al servicio
     EntityNotFoundException thrown = assertThrows(EntityNotFoundException.class, 
         () -> service.findByIdProducto(42L));  // Aquí 42L es el id del producto
 
-    // Verificamos el mensaje de la excepción
+    // Verificamos el mensaje de la excepcion
     assertEquals("No se encontraron ventas para el producto con ID 42", thrown.getMessage());
 
     // Verificamos que el repositorio fue llamado con el id del producto

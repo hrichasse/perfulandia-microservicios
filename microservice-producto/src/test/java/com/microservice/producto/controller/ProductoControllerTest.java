@@ -25,10 +25,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class ProductoControllerTest {
 
     @Autowired
-    private MockMvc mockMvc;  // MockMvc se inyecta automáticamente por WebMvcTest
+    private MockMvc mockMvc;  // MockMvc se inyecta automaticamente por WebMvcTest
 
     @MockBean
-    private IProductoService productoService;  // Aquí usamos MockBean para simular el servicio
+    private IProductoService productoService;  //Aqui usamos MockBean para simular el servicio
 
     @Test
     void getAll_ReturnsListJson() throws Exception {

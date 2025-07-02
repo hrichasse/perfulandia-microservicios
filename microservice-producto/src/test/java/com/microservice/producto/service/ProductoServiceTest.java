@@ -22,11 +22,11 @@ class ProductoServiceTest {
     private IProductoRepository repo;  // Repositorio simulado
 
     @InjectMocks
-    private ProductoServiceImpl service;  // El servicio real, no la interfaz
+    private ProductoServiceImpl service;  // El servicio real no la interfaz
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);  // Inicializa los mocks
+        MockitoAnnotations.openMocks(this);  // Inicia los mocks
     }
 
     @Test
@@ -38,10 +38,10 @@ class ProductoServiceTest {
         p.setModelo("Code");
         when(repo.findById(1L)).thenReturn(Optional.of(p));
 
-        // Acción: Llamada al método que se va a probar
+        // Llamada al metodo que se va a probar
         Producto result = service.findById(1L);
 
-        // Verificación: Asegurarnos de que los resultados son correctos
+        // Verificacion: Asegurarnos de que los resultados son correctos
         assertNotNull(result);
         assertEquals("Armani", result.getName());
         assertEquals("Code", result.getModelo());
@@ -50,10 +50,10 @@ class ProductoServiceTest {
 
     @Test
     void findByIdNotFound() {
-        // Preparar: El repositorio devuelve un Optional vacío
+        // Preparar: El repositorio devuelve un Optional vacio
         when(repo.findById(anyLong())).thenReturn(Optional.empty());
 
-        // Acción y Verificación: Esperamos que se lance una EntityNotFoundException
+        // Accion y Verificacion: Esperamos que se lance una EntityNotFoundException
         EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, 
                                                          () -> service.findById(42L));
         // Verificamos que el mensaje de la excepción sea el esperado
@@ -71,10 +71,10 @@ class ProductoServiceTest {
         p.setName("Armani");
         p.setModelo("Code");
 
-        // Cuando: El método save del servicio es llamado
+        // Cuando El metodo save del servicio es llamado
         service.save(p);
 
-        // Entonces: Verificamos que el método save del repositorio sea llamado
+        // Entonces: Verificamos que el metodo save del repositorio sea llamado
         verify(repo, times(1)).save(p);
     }
 }

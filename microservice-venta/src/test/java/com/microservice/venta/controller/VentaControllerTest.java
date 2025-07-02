@@ -60,5 +60,5 @@ class VentaControllerTest {
                .andExpect(status().isNotFound());
     }
 
-    // Agregar más tests para otros endpoints si es necesario.
+    
 }
