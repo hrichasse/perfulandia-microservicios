@@ -33,8 +33,17 @@ public class ProductoServiceImpl implements IProductoService {
     }
 
     @Override
-    public void save(Producto producto) {
-        iProductoRepository.save(producto);
+    public Producto save(Producto producto) {
+        return iProductoRepository.save(producto);
+    }
+
+    @Override
+    public void deleteById(Long id) {
+        // Verificar si el producto existe antes de eliminarlo
+        if (!iProductoRepository.existsById(id)) {
+            throw new EntityNotFoundException("Producto con ID " + id + " no encontrado");
+        }
+        iProductoRepository.deleteById(id);
     }
 
     @Override
