@@ -39,7 +39,7 @@ public class VentaController {
             Venta venta = iVentaService.findById(id);  // Llamada al servicio
             return ResponseEntity.ok(venta);  // Si la venta se encuentra, retorna un 200 OK
         } catch (EntityNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());  // Si no se encuentra, devuelve 404 con el mensaje de la excepción
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());  // SSi no se encuentra, devuelve 404 con el mensaje de la excepcion
         }
     }
 
@@ -48,9 +48,9 @@ public class VentaController {
     public ResponseEntity<?> findByProductoId(@PathVariable Long productoId) {
         try {
             List<Venta> ventas = iVentaService.findByIdProducto(productoId);  // Llamada al servicio para obtener ventas
-            return ResponseEntity.ok(ventas);  // Si se encuentran ventas, retorna 200 OK
+            return ResponseEntity.ok(ventas);  // Si se encuentran ventas, retorna 200 OK en postman por ej
         } catch (EntityNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());  // Si no se encuentran ventas, retorna 404
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());  // Si no se encuentran ventas el retorna 404
         }
     }
 }

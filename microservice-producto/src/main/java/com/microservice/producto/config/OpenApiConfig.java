@@ -15,5 +15,5 @@ import org.springframework.context.annotation.Configuration;
   )
 )
 public class OpenApiConfig {
-    // Configuración de metadata para OpenAPI
+    
 }

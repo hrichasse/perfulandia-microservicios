@@ -108,7 +108,7 @@ public class ProductoController {
         return ResponseEntity.ok(productoService.findVentasByIdProducto(idProducto));
     }
 
-    // Manejador para la excepción EntityNotFoundException
+   
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<String> handleEntityNotFoundException(EntityNotFoundException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);

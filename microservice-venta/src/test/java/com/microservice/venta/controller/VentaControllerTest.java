@@ -35,7 +35,7 @@ class VentaControllerTest {
 
     @Test
     void getVentaById_ReturnsVentaJson() throws Exception {
-        // Crear una venta de ejemplo
+        // Crear una venta de ejemplo para testear
         Venta venta = new Venta();
         venta.setId(1L);
         venta.setProductoId(101L);
@@ -43,7 +43,7 @@ class VentaControllerTest {
         // Simular la llamada al servicio
         when(ventaService.findById(1L)).thenReturn(venta);
 
-        // Realizar la solicitud GET y verificar el resultado
+        // Realizar la solicitud get y verificar el resultado
         mockMvc.perform(get("/api/v1/venta/search/{id}", 1L))
                .andExpect(status().isOk())
                .andExpect(jsonPath("$.id").value(1L))
@@ -55,7 +55,7 @@ class VentaControllerTest {
         // Simular que el servicio no encuentra la venta
         when(ventaService.findById(42L)).thenThrow(new EntityNotFoundException("Venta con ID 42 no encontrada"));
 
-        // Realizar la solicitud GET y verificar que se devuelve el error 404
+        // Realizar la solicitud get y verificar que se devuelve el error 404
         mockMvc.perform(get("/api/v1/venta/search/{id}", 42L))
                .andExpect(status().isNotFound());
     }

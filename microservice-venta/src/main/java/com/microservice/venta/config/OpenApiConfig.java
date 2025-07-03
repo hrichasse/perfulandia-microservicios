@@ -15,5 +15,4 @@ import org.springframework.context.annotation.Configuration;
   )
 )
 public class OpenApiConfig {
-    // No es necesario ningún bean adicional, solo definimos la metadata.
 }

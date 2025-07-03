@@ -21,11 +21,11 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(ProductoController.class)  // Esto asegura que solo se cargue el controlador
+@WebMvcTest(ProductoController.class)  // Esto asegura qu solo se cargue el controlador
 class ProductoControllerTest {
 
     @Autowired
-    private MockMvc mockMvc;  // MockMvc se inyecta automaticamente por WebMvcTest
+    private MockMvc mockMvc;  // Mock se inyecta automaticamente por WebMvcTest
 
     @MockBean
     private IProductoService productoService;  //Aqui usamos MockBean para simular el servicio

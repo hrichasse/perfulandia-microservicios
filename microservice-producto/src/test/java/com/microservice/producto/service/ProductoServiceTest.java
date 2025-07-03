@@ -65,7 +65,6 @@ class ProductoServiceTest {
 
     @Test
     void saveProducto() {
-        // Dado: Un producto a guardar
         Producto p = new Producto();
         p.setId(1L);
         p.setName("Armani");
@@ -74,7 +73,7 @@ class ProductoServiceTest {
         // Cuando El metodo save del servicio es llamado
         service.save(p);
 
-        // Entonces: Verificamos que el metodo save del repositorio sea llamado
+        // Entonces: Verificamos que el metodo save del repositorio sea llamado una vez
         verify(repo, times(1)).save(p);
     }
 }

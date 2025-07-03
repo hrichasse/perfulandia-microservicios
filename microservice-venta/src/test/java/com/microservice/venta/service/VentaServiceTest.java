@@ -24,24 +24,24 @@ class VentaServiceTest {
     private VentaRepository repo;  // Repositorio simulado
 
     @InjectMocks
-    private VentaServiceImpl service;  // El servicio real bajo prueba
+    private VentaServiceImpl service;  // El servicio real bajo la prueba que hacemos
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);  // Inicializa los mocks
+        MockitoAnnotations.openMocks(this);  // Inicializa los mocks testtttt
     }
 
     @Test
     void findByIdExisting() {
         Venta venta = new Venta();
         venta.setId(1L);
-        venta.setProductoId(101L);  // Usamos productoId
+        venta.setProductoId(101L);  
         when(repo.findById(1L)).thenReturn(Optional.of(venta));
 
         Venta result = service.findById(1L);
 
         assertNotNull(result);
-        assertEquals(101L, result.getProductoId());  // Verificamos el productoId
+        assertEquals(101L, result.getProductoId());  
         verify(repo).findById(1L);
     }
 
