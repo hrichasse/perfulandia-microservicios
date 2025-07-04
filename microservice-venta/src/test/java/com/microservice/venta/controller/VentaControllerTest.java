@@ -1,5 +1,7 @@
 package com.microservice.venta.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.microservice.venta.exception.GlobalExceptionHandler; // Ajusta el nombre si tu clase es diferente
 import com.microservice.venta.model.Venta;
 import com.microservice.venta.service.IVentaService;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,6 +14,9 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import jakarta.persistence.EntityNotFoundException;
 
+
+import java.util.Collections;
+import java.util.List;
 
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -27,23 +32,28 @@ class VentaControllerTest {
     @InjectMocks
     private VentaController ventaController;
 
+    private final ObjectMapper objectMapper = new ObjectMapper();
+
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        mockMvc = MockMvcBuilders.standaloneSetup(ventaController).build();
+        mockMvc = MockMvcBuilders
+            .standaloneSetup(ventaController)
+            .setControllerAdvice(new GlobalExceptionHandler()) // Agrega tu handler aquí
+            .build();
     }
 
     @Test
     void getVentaById_ReturnsVentaJson() throws Exception {
-        // Crear una venta de ejemplo para testear
+        // aqui Creamos una venta de ejemplo para testear
         Venta venta = new Venta();
         venta.setId(1L);
         venta.setProductoId(101L);
 
-        // Simular la llamada al servicio
+        // Simulamos una llamada al servicio
         when(ventaService.findById(1L)).thenReturn(venta);
 
-        // Realizar la solicitud get y verificar el resultado
+        // Realizamos la solicitud get y verificamos el resultado
         mockMvc.perform(get("/api/v1/venta/search/{id}", 1L))
                .andExpect(status().isOk())
                .andExpect(jsonPath("$.id").value(1L))
@@ -52,13 +62,58 @@ class VentaControllerTest {
 
     @Test
     void getVentaById_NotFound() throws Exception {
-        // Simular que el servicio no encuentra la venta
+        // Simulamos que el servicio no encuentra la venta
         when(ventaService.findById(42L)).thenThrow(new EntityNotFoundException("Venta con ID 42 no encontrada"));
 
-        // Realizar la solicitud get y verificar que se devuelve el error 404
+        // aca se realiza  la solicitud get y verificamos que se devuelve el error 404
         mockMvc.perform(get("/api/v1/venta/search/{id}", 42L))
                .andExpect(status().isNotFound());
     }
 
-    
+    @Test
+    void saveVenta_Created() throws Exception {
+        Venta venta = new Venta();
+        venta.setProductoId(101L);
+
+        doNothing().when(ventaService).save(any(Venta.class));
+
+        mockMvc.perform(post("/api/v1/venta/create")
+                .contentType("application/json")
+                .content(objectMapper.writeValueAsString(venta)))
+                .andExpect(status().isCreated());
+    }
+
+    @Test
+    void findAllVentas_ReturnsList() throws Exception {
+        Venta venta = new Venta();
+        venta.setId(1L);
+        List<Venta> ventas = Collections.singletonList(venta);
+
+        when(ventaService.findAll()).thenReturn(ventas);
+
+        mockMvc.perform(get("/api/v1/venta/all"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(1));
+    }
+
+    @Test
+    void findByProductoId_ReturnsVentas() throws Exception {
+        Venta venta = new Venta();
+        venta.setId(1L);
+        List<Venta> ventas = Collections.singletonList(venta);
+
+        when(ventaService.findByIdProducto(101L)).thenReturn(ventas);
+
+        mockMvc.perform(get("/api/v1/venta/search-by-producto/{productoId}", 101L))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(1));
+    }
+
+    @Test
+    void findByProductoId_NotFound() throws Exception {
+        when(ventaService.findByIdProducto(999L)).thenThrow(new EntityNotFoundException("No hay ventas para ese producto"));
+
+        mockMvc.perform(get("/api/v1/venta/search-by-producto/{productoId}", 999L))
+                .andExpect(status().isNotFound());
+    }
 }

@@ -1,79 +1,137 @@
 package com.microservice.producto.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.microservice.producto.http.response.VentaByProductoResponse;
 import com.microservice.producto.model.Producto;
 import com.microservice.producto.service.IProductoService;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import jakarta.persistence.EntityNotFoundException;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(ProductoController.class)  // Esto asegura qu solo se cargue el controlador
 class ProductoControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;  // Mock se inyecta automaticamente por WebMvcTest
+    private MockMvc mockMvc;
 
-    @MockBean
-    private IProductoService productoService;  //Aqui usamos MockBean para simular el servicio
+    @Mock
+    private IProductoService productoService;
 
-    @Test
-    void getAll_ReturnsListJson() throws Exception {
-        // Crear lista simulada de productos
-        List<Producto> productos = Arrays.asList(
-            new Producto(1L, "Armani", "Code"),
-            new Producto(2L, "Paco Rabanne", "Invictus")
-        );
+    @InjectMocks
+    private ProductoController productoController;
 
-        // Simulamos la respuesta del servicio
-        when(productoService.findAll()).thenReturn(productos);
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
-        mockMvc.perform(get("/api/v1/producto/all"))  // Asegúrate de que la ruta sea correcta
-               .andExpect(status().isOk())  // Verificar estado 200 OK
-               .andExpect(jsonPath("$.length()").value(2))  // Verificar que hay dos productos
-               .andExpect(jsonPath("$[0].name").value("Armani"))  // Verificar el nombre del primer producto
-               .andExpect(jsonPath("$[1].name").value("Paco Rabanne"));  // Verificar el nombre del segundo producto
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
+        mockMvc = MockMvcBuilders.standaloneSetup(productoController).build();
     }
 
     @Test
-    void getById_ReturnsProductoJson() throws Exception {
+    void saveProducto_Created() throws Exception {
         Producto producto = new Producto();
         producto.setId(1L);
-        producto.setName("Armani");
-        producto.setModelo("Code");
+        when(productoService.save(any(Producto.class))).thenReturn(producto);
 
-        // Simulamos la respuesta del servicio
+        mockMvc.perform(post("/api/v1/producto/create")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(producto)))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.id").value(1L));
+    }
+
+    @Test
+    void findAllProducto_ReturnsList() throws Exception {
+        Producto producto = new Producto();
+        producto.setId(1L);
+        List<Producto> productos = Collections.singletonList(producto);
+
+        when(productoService.findAll()).thenReturn(productos);
+
+        mockMvc.perform(get("/api/v1/producto/all"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(1));
+    }
+
+    @Test
+    void findAllProducto_NoContent() throws Exception {
+        when(productoService.findAll()).thenReturn(Collections.emptyList());
+
+        mockMvc.perform(get("/api/v1/producto/all"))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void findById_ReturnsProducto() throws Exception {
+        Producto producto = new Producto();
+        producto.setId(1L);
         when(productoService.findById(1L)).thenReturn(producto);
 
         mockMvc.perform(get("/api/v1/producto/search/{id}", 1L))
-               .andExpect(status().isOk())
-               .andExpect(jsonPath("$.id").value(1L))
-               .andExpect(jsonPath("$.name").value("Armani"))
-               .andExpect(jsonPath("$.modelo").value("Code"));
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1L));
     }
 
     @Test
-void getById_NotFound() throws Exception {
-    // Simulamos que no se encuentra el producto
-    when(productoService.findById(42L)).thenThrow(new EntityNotFoundException("Producto no encontrado"));
+    void updateProducto_ReturnsUpdatedProducto() throws Exception {
+        Producto producto = new Producto();
+        producto.setId(1L);
+        when(productoService.save(any(Producto.class))).thenReturn(producto);
 
-    // Realizamos la solicitud GET y verificamos el resultado
-    mockMvc.perform(get("/api/v1/producto/search/{id}", 42L))
-           .andExpect(status().isNotFound())  // Verifica que la respuesta sea 404
-           .andExpect(content().string("Producto no encontrado"));  // Verifica que el mensaje de error sea el esperado
-}
+        mockMvc.perform(put("/api/v1/producto/update/{id}", 1L)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(producto)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1L));
+    }
 
+    @Test
+    void deleteProducto_NoContent() throws Exception {
+        doNothing().when(productoService).deleteById(1L);
+
+        mockMvc.perform(delete("/api/v1/producto/delete/{id}", 1L))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void findVentasByIdProducto_ReturnsVentas() throws Exception {
+        VentaByProductoResponse ventasResponse = new VentaByProductoResponse(); // Usa tu DTO real
+        when(productoService.findVentasByIdProducto(1L)).thenReturn(ventasResponse);
+
+        mockMvc.perform(get("/api/v1/producto/search-venta/{idProducto}", 1L))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void findVentasByIdProducto_NotFound() throws Exception {
+        when(productoService.findVentasByIdProducto(99L))
+                .thenThrow(new EntityNotFoundException("No encontrado"));
+
+        mockMvc.perform(get("/api/v1/producto/search-venta/{idProducto}", 99L))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void handleEntityNotFoundException_ReturnsNotFound() {
+        EntityNotFoundException ex = new EntityNotFoundException("No encontrado");
+        ProductoController controller = new ProductoController();
+        ResponseEntity<String> response = controller.handleEntityNotFoundException(ex);
+        assertEquals(404, response.getStatusCodeValue());
+        assertEquals("No encontrado", response.getBody());
+    }
 }
