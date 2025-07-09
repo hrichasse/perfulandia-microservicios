@@ -1,6 +1,8 @@
 package com.microservice.venta.controller;
 
+import com.microservice.venta.dto.VentaHateoasDTO;
 import com.microservice.venta.model.Venta;
+import com.microservice.venta.service.HateoasService;
 import com.microservice.venta.service.IVentaService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -18,39 +20,48 @@ public class VentaController {
 
     @Autowired
     private IVentaService iVentaService;
+    
+    @Autowired
+    private HateoasService hateoasService;
 
     @Operation(summary = "Crear una nueva venta", description = "Este endpoint permite crear una nueva venta.")
     @PostMapping("/create")
     @ResponseStatus(HttpStatus.CREATED)
-    public void saveVenta(@RequestBody Venta venta) {
-        iVentaService.save(venta);
+    public ResponseEntity<VentaHateoasDTO> saveVenta(@RequestBody Venta venta) {
+        Venta savedVenta = iVentaService.save(venta);
+        VentaHateoasDTO dto = hateoasService.addLinksToVenta(savedVenta);
+        return ResponseEntity.status(HttpStatus.CREATED).body(dto);
     }
 
     @Operation(summary = "Obtener todas las ventas", description = "Este endpoint devuelve una lista de todas las ventas registradas.")
     @GetMapping("/all")
-    public ResponseEntity<?> findAllVentas() {
-        return ResponseEntity.ok(iVentaService.findAll());
+    public ResponseEntity<List<VentaHateoasDTO>> findAllVentas() {
+        List<Venta> ventas = iVentaService.findAll();
+        List<VentaHateoasDTO> dtos = hateoasService.addLinksToVentas(ventas);
+        return ResponseEntity.ok(dtos);
     }
 
     @Operation(summary = "Buscar venta por ID", description = "Este endpoint devuelve una venta específica basado en el ID proporcionado.")
     @GetMapping("/search/{id}")
-    public ResponseEntity<?> findById(@PathVariable Long id) {
+    public ResponseEntity<VentaHateoasDTO> findById(@PathVariable Long id) {
         try {
-            Venta venta = iVentaService.findById(id);  // Llamada al servicio
-            return ResponseEntity.ok(venta);  // Si la venta se encuentra, retorna un 200 OK
+            Venta venta = iVentaService.findById(id);
+            VentaHateoasDTO dto = hateoasService.addLinksToVenta(venta);
+            return ResponseEntity.ok(dto);
         } catch (EntityNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());  // SSi no se encuentra, devuelve 404 con el mensaje de la excepcion
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
 
     @Operation(summary = "Buscar ventas por ID de producto", description = "Este endpoint devuelve las ventas asociadas a un producto basado en su ID.")
     @GetMapping("/search-by-producto/{productoId}")
-    public ResponseEntity<?> findByProductoId(@PathVariable Long productoId) {
+    public ResponseEntity<List<VentaHateoasDTO>> findByProductoId(@PathVariable Long productoId) {
         try {
-            List<Venta> ventas = iVentaService.findByIdProducto(productoId);  // Llamada al servicio para obtener ventas
-            return ResponseEntity.ok(ventas);  // Si se encuentran ventas, retorna 200 OK en postman por ej
+            List<Venta> ventas = iVentaService.findByIdProducto(productoId);
+            List<VentaHateoasDTO> dtos = hateoasService.addLinksToVentas(ventas);
+            return ResponseEntity.ok(dtos);
         } catch (EntityNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());  // Si no se encuentran ventas el retorna 404
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
 }

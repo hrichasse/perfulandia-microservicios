@@ -9,7 +9,7 @@ public interface IVentaService {
 
     Venta findById(Long id);
 
-    void save(Venta venta);
+    Venta save(Venta venta);
 
     List<Venta> findByIdVenta(Long idProducto);  // Método para buscar por ID de venta (si es necesario)
 

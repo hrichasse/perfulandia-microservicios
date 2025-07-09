@@ -1,6 +1,8 @@
 package com.microservice.producto.controller;
 
+import com.microservice.producto.dto.ProductoHateoasDTO;
 import com.microservice.producto.model.Producto;
+import com.microservice.producto.service.HateoasService;
 import com.microservice.producto.service.IProductoService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
@@ -30,6 +32,9 @@ public class ProductoController {
 
     @Autowired
     private IProductoService productoService;
+    
+    @Autowired
+    private HateoasService hateoasService;
 
     @Operation(summary = "Crear un nuevo producto", description = "Este endpoint permite crear un nuevo producto en la base de datos.")
     @ApiResponses(value = {
@@ -38,9 +43,10 @@ public class ProductoController {
     })
     @PostMapping("/create")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<Producto> saveProducto(@Valid @RequestBody Producto producto) {                
+    public ResponseEntity<ProductoHateoasDTO> saveProducto(@Valid @RequestBody Producto producto) {                
         Producto savedProducto = productoService.save(producto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedProducto);
+        ProductoHateoasDTO dto = hateoasService.addLinksToProducto(savedProducto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(dto);
     }
 
     @Operation(summary = "Obtener todos los productos", description = "Este endpoint devuelve una lista de todos los productos registrados.")
@@ -49,12 +55,13 @@ public class ProductoController {
         @ApiResponse(responseCode = "204", description = "No hay productos registrados")
     })
     @GetMapping("/all")
-    public ResponseEntity<List<Producto>> findAllProducto(){
+    public ResponseEntity<List<ProductoHateoasDTO>> findAllProducto(){
         List<Producto> productos = productoService.findAll();
         if (productos.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
-        return ResponseEntity.ok(productos);
+        List<ProductoHateoasDTO> dtos = hateoasService.addLinksToProductos(productos);
+        return ResponseEntity.ok(dtos);
     }
 
     @Operation(summary = "Buscar producto por ID", description = "Este endpoint devuelve un producto específico basado en el ID proporcionado.")
@@ -63,10 +70,11 @@ public class ProductoController {
         @ApiResponse(responseCode = "404", description = "Producto no encontrado")
     })
     @GetMapping("/search/{id}")
-    public ResponseEntity<Producto> findById(
+    public ResponseEntity<ProductoHateoasDTO> findById(
         @Parameter(description = "ID del producto") @PathVariable Long id) {
         Producto producto = productoService.findById(id);
-        return ResponseEntity.ok(producto);
+        ProductoHateoasDTO dto = hateoasService.addLinksToProducto(producto);
+        return ResponseEntity.ok(dto);
     }
 
     @Operation(summary = "Actualizar producto", description = "Este endpoint permite actualizar un producto existente.")
@@ -76,12 +84,13 @@ public class ProductoController {
         @ApiResponse(responseCode = "400", description = "Datos de entrada inválidos")
     })
     @PutMapping("/update/{id}")
-    public ResponseEntity<Producto> updateProducto(
+    public ResponseEntity<ProductoHateoasDTO> updateProducto(
         @Parameter(description = "ID del producto") @PathVariable Long id,
         @Valid @RequestBody Producto producto) {
         producto.setId(id);
         Producto updatedProducto = productoService.save(producto);
-        return ResponseEntity.ok(updatedProducto);
+        ProductoHateoasDTO dto = hateoasService.addLinksToProducto(updatedProducto);
+        return ResponseEntity.ok(dto);
     }
 
     @Operation(summary = "Eliminar producto", description = "Este endpoint permite eliminar un producto por su ID.")
